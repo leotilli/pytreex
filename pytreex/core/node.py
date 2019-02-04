@@ -26,7 +26,7 @@ class Node(object):
     __lastId = 0
     # this holds attributes used for all nodes
     # (overridden in derived classes and used from get_attr_list)
-    attrib = [('alignment', types.ListType), ('wild', types.DictType)]
+    attrib = [('alignment', list), ('wild', dict)]
     # this similarly holds a list of attributes that contain references
     # (to be overridden by derived classes)
     ref_attrib = []
@@ -46,13 +46,13 @@ class Node(object):
                                         self.get_attr_list(safe=True)):
             attr, att_type = attr_type
             # initialize lists and dicts, perform simple type coercion on other
-            if att_type == types.DictType:
+            if att_type == dict:
                 setattr(self, safe_attr,
                         data.get(attr) is not None and dict(data[attr]) or {})
-            elif att_type == types.ListType:
+            elif att_type == list:
                 setattr(self, safe_attr,
                         data.get(attr) is not None and list(data[attr]) or [])
-            elif att_type == types.BooleanType:
+            elif att_type == bool:
                 # booleans need to be prepared for values such as '1' and '0'
                 setattr(self, safe_attr,
                         data.get(attr) is not None and bool(int(data[attr])) or False)
@@ -345,9 +345,9 @@ class Node(object):
         ancestor = self.parent
         while ancestor is not None:
             if ancestor is another_node:
-                return True;
+                return True
             ancestor = ancestor.parent
-        return False;
+        return False
 
     @property
     def root(self):
@@ -454,7 +454,7 @@ class Ordered(object):
     defines sorting.
     """
 
-    attrib = [('ord', types.IntType)]
+    attrib = [('ord', int)]
     ref_attrib = []
 
     def __lt__(self, other):
@@ -583,7 +583,7 @@ class Ordered(object):
 class EffectiveRelations(object):
     "Representing a node with effective relations"
 
-    attrib = [('is_member', types.BooleanType)]
+    attrib = [('is_member', bool)]
     ref_attrib = []
 
     def is_coap_root(self):
@@ -718,8 +718,8 @@ class EffectiveRelations(object):
 class InClause(object):
     "Represents nodes that are organized in clauses"
 
-    attrib = [('clause_number', types.IntType),
-              ('is_clause_head', types.BooleanType)]
+    attrib = [('clause_number', int),
+              ('is_clause_head', bool)]
     ref_attrib = []
 
     def get_clause_root(self):
@@ -749,24 +749,24 @@ class InClause(object):
 class T(Node, Ordered, EffectiveRelations, InClause):
     "Representing a t-node"
 
-    attrib = [('functor', types.UnicodeType), ('formeme', types.UnicodeType),
-              ('t_lemma', types.UnicodeType), ('nodetype', types.UnicodeType),
-              ('subfunctor', types.UnicodeType), ('tfa', types.UnicodeType),
-              ('is_dsp_root', types.BooleanType), ('gram', types.DictType),
-              ('a', types.DictType), ('compl.rf', types.ListType),
-              ('coref_gram.rf', types.ListType),
-              ('coref_text.rf', types.ListType),
-              ('sentmod', types.UnicodeType),
-              ('is_parenthesis', types.BooleanType),
-              ('is_passive', types.BooleanType),
-              ('is_generated', types.BooleanType),
-              ('is_relclause_head', types.BooleanType),
-              ('is_name_of_person', types.BooleanType),
-              ('voice', types.UnicodeType), ('mlayer_pos', types.UnicodeType),
-              ('t_lemma_origin', types.UnicodeType),
-              ('formeme_origin', types.UnicodeType),
-              ('is_infin', types.BooleanType),
-              ('is_reflexive', types.BooleanType)]
+    attrib = [('functor', str), ('formeme', str),
+              ('t_lemma', str), ('nodetype', str),
+              ('subfunctor', str), ('tfa', str),
+              ('is_dsp_root', bool), ('gram', dict),
+              ('a', dict), ('compl.rf', list),
+              ('coref_gram.rf', list),
+              ('coref_text.rf', list),
+              ('sentmod', str),
+              ('is_parenthesis', bool),
+              ('is_passive', bool),
+              ('is_generated', bool),
+              ('is_relclause_head', bool),
+              ('is_name_of_person', bool),
+              ('voice', str), ('mlayer_pos', str),
+              ('t_lemma_origin', str),
+              ('formeme_origin', str),
+              ('is_infin', bool),
+              ('is_reflexive', bool)]
     ref_attrib = ['a/lex.rf', 'a/aux.rf', 'compl.rf', 'coref_gram.rf',
                   'coref_text.rf']
 
@@ -992,7 +992,7 @@ class T(Node, Ordered, EffectiveRelations, InClause):
     def __hash__(self):
         """Return hash of the tree that is composed of t-lemmas, formemes,
         and parent orders of all nodes in the tree (ordered)."""
-        return hash(unicode(self))
+        return hash(str(self))
 
     def __unicode__(self):
         desc = self.get_descendants(add_self=1, ordered=1)
@@ -1003,23 +1003,23 @@ class T(Node, Ordered, EffectiveRelations, InClause):
                          for n in desc])
 
     def __str__(self):
-        return unicode(self).encode('UTF-8', 'replace')
+        return str(self).encode('UTF-8', 'replace')
 
 
 class A(Node, Ordered, EffectiveRelations, InClause):
     "Representing an a-node"
 
-    attrib = [('form', types.UnicodeType), ('lemma', types.UnicodeType),
-              ('tag', types.UnicodeType), ('afun', types.UnicodeType),
-              ('no_space_after', types.BooleanType),
-              ('morphcat', types.DictType),
-              ('is_parenthesis_root', types.BooleanType),
-              ('edge_to_collapse', types.BooleanType),
-              ('is_auxiliary', types.BooleanType),
-              ('p_terminal.rf', types.UnicodeType),
-              ('upos', types.UnicodeType), ('xpos', types.UnicodeType),
-              ('feats', types.UnicodeType), ('deprel', types.UnicodeType),
-              ('deps', types.UnicodeType), ('misc', types.UnicodeType),
+    attrib = [('form', str), ('lemma', str),
+              ('tag', str), ('afun', str),
+              ('no_space_after', bool),
+              ('morphcat', dict),
+              ('is_parenthesis_root', bool),
+              ('edge_to_collapse', bool),
+              ('is_auxiliary', bool),
+              ('p_terminal.rf', str),
+              ('upos', str), ('xpos', str),
+              ('feats', str), ('deprel', str),
+              ('deps', str), ('misc', str),
               ]
     ref_attrib = ['p_terminal.rf']
 
@@ -1598,9 +1598,9 @@ class A(Node, Ordered, EffectiveRelations, InClause):
 class N(Node):
     "Representing an n-node"
 
-    attrib = [('ne_type', types.UnicodeType),
-              ('normalized_name', types.UnicodeType),
-              ('a.rf', types.ListType), ]
+    attrib = [('ne_type', str),
+              ('normalized_name', str),
+              ('a.rf', list), ]
     ref_attrib = ['a.rf']
 
     def __init__(self, data=None, parent=None, zone=None):
@@ -1611,11 +1611,11 @@ class N(Node):
 class P(Node):
     "Representing a p-node"
 
-    attrib = [('is_head', types.BooleanType), ('index', types.UnicodeType),
-              ('coindex', types.UnicodeType), ('edgelabel', types.UnicodeType),
-              ('form', types.UnicodeType), ('lemma', types.UnicodeType),
-              ('tag', types.UnicodeType), ('phrase', types.UnicodeType),
-              ('functions', types.ListType), ]
+    attrib = [('is_head', bool), ('index', str),
+              ('coindex', str), ('edgelabel', str),
+              ('form', str), ('lemma', str),
+              ('tag', str), ('phrase', str),
+              ('functions', list), ]
     ref_attrib = []
 
     def __init__(self, data=None, parent=None, zone=None):
@@ -1626,10 +1626,10 @@ class P(Node):
 class AMR(Node, Ordered):
     "Representing an AMR type"
 
-    attrib = [('varname', types.UnicodeType), ('nodetype', types.UnicodeType),
-              ('modifier', types.UnicodeType), ('concept', types.UnicodeType),
-              ('src_tnode.rf', types.UnicodeType), ('coref.rf', types.ListType),
-              ('is_ne_head', types.BooleanType), ('is_ne_subnode', types.BooleanType)]
+    attrib = [('varname', str), ('nodetype', str),
+              ('modifier', str), ('concept', str),
+              ('src_tnode.rf', str), ('coref.rf', list),
+              ('is_ne_head', bool), ('is_ne_subnode', bool)]
 
     ref_attrib = ['src_tnode.rf', 'coref.rf']
 
@@ -1777,7 +1777,7 @@ class AMR(Node, Ordered):
                 data['is_ne_subnode'] = data['wild']['is_ne_subnode']
                 del data['wild']['is_ne_subnode']
         if data.get('nodetype') == 'coref' and 'coref.rf' not in data:
-            log_warn('Coref-type node has no coreference: ' . str(data))
+            log_warn('Coref-type node has no coreference: ' + str(data))
 
     def data_to_tamr(self, data):
         """Convert back from AMR into TAMR-stored YAML (used by YAML writer)."""

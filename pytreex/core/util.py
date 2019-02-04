@@ -35,13 +35,13 @@ def as_list(value):
     return [value]
 
 
-def file_stream(filename, mode='r', encoding='UTF-8'):
+def file_stream(filename, mode='rb', encoding='utf-8'):
     """\
     Given a file stream or a file name, return the corresponding stream,
     handling GZip. Depending on mode, open an input or output stream.
     """
     # open file
-    if isinstance(filename, (file, IOBase, StreamReader, StreamWriter)):
+    if isinstance(filename, (IOBase, StreamReader, StreamWriter)):
         fh = filename
     elif filename.endswith('.gz'):
         fh = gzip.open(filename, mode)

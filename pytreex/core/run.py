@@ -57,10 +57,10 @@ class Run(object):
 
     def run_on_cluster(self):
         # split input files for different jobs
-        job_files = [self.input_files[i::self.jobs] for i in xrange(self.jobs)]
+        job_files = [self.input_files[i::self.jobs] for i in range(self.jobs)]
         jobs = [Job(name=self.JOB_NAME_PREFIX + self.scenario.name)]
         work_dir = jobs[0].work_dir
-        for jobnum in xrange(1, self.jobs):
+        for jobnum in range(1, self.jobs):
             jobs.append(Job(name=self.JOB_NAME_PREFIX + self.scenario.name +
                             '-' + str(jobnum).zfill(2), work_dir=work_dir))
         log_info('Creating jobs ...')
@@ -77,9 +77,9 @@ class Run(object):
         log_info('All jobs done.')
 
     def print_usage(self):
-        print """\
+        print ("""\
         Usage: ./treex.py [-h] [-j jobs] [scenario file1 [file2...]]
-        """
+        """)
 
 
 class Scenario(object):
